@@ -3,17 +3,18 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import Link from "next/link"
 import {
   Search,
   ExternalLink,
   Users,
-  Wrench,
-  Calendar,
-  TrendingUp,
-  Globe,
   CheckCircle,
   XCircle,
+  Wrench,
+  Calendar,
+  Globe,
+  TrendingUp,
+  LayoutGrid,
+  List,
   FileText,
   DollarSign,
   BookOpen,
@@ -22,11 +23,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { List, LayoutGrid } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface ToolReport {
   id: string
@@ -70,6 +70,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">Tool Report Dashboard</h1>
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -104,6 +105,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
         </div>
       </div>
 
+      {/* Conditional View: Grid or List */}
       {view === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredAndSortedTools.map((tool) => (
@@ -114,8 +116,8 @@ export default function DashboardClient({ initialReports }: { initialReports: To
             >
               <CardHeader className="pb-4">
                 <CardTitle className="text-slate-900 dark:text-slate-100 text-xl flex-1">{tool.name}</CardTitle>
-                {/* CAMBIO 1: Se muestran TODAS las categorías y son más pequeñas */}
                 <div className="flex flex-wrap gap-1 pt-2">
+                  {/* REGLA 1: Se muestran TODAS las categorías, más pequeñas y con color azul */}
                   {tool.categories.map((category) => (
                     <Badge key={category} className="text-[10px] px-1.5 py-0.5 font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300">
                       {category}
@@ -130,7 +132,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 </CardDescription>
               </CardContent>
 
-              {/* CAMBIO 2: Se añade Consistency y Updated a la vista de tarjeta */}
+              {/* REGLA 2: Se mantiene Consistency y Updated en la card */}
               <div className="px-6 pb-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
                  {tool.consistency_web_vs_users != null && (
                   <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
@@ -149,7 +151,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
           ))}
         </div>
       ) : (
-        // ... (La vista de lista se mantiene igual)
+        // La vista de lista se mantiene igual pero con el color de badge actualizado
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
@@ -179,17 +181,15 @@ export default function DashboardClient({ initialReports }: { initialReports: To
           </Table>
         </div>
       )}
-
-      {/* CAMBIO 3: El Dialog ahora es más ancho y tiene scroll */}
+      
+      {/* REGLA POPUP 1: Dialog ahora es más ancho (60vw), con scroll y texto de 14px (text-sm) */}
       <Dialog open={!!selectedTool} onOpenChange={() => setSelectedTool(null)}>
-        <DialogContent className="w-[60vw] max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
+        <DialogContent className="w-[60vw] max-w-none max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-sm">
           {selectedTool && (
-            <div className="text-sm text-slate-600 dark:text-slate-400">
+            <div className="text-slate-600 dark:text-slate-400">
               <DialogHeader className="pb-4 mb-6 border-b border-slate-200 dark:border-slate-800">
                 <DialogTitle className="text-3xl font-bold text-slate-900 dark:text-slate-100">{selectedTool.name}</DialogTitle>
-                <DialogDescription className="text-slate-600 dark:text-slate-400 text-base pt-2">
-                  {selectedTool.short_description}
-                </DialogDescription>
+                <DialogDescription className="text-base pt-2">{selectedTool.short_description}</DialogDescription>
                  <Button variant="outline" className="w-fit mt-4 bg-transparent" onClick={() => window.open(selectedTool.official_url, "_blank")}>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Visit Official Website
@@ -198,6 +198,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Pros */}
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-green-500" /> Pros
@@ -206,6 +207,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       {selectedTool.pros.map((pro, index) => <li key={index}>{pro}</li>)}
                     </ul>
                   </div>
+                  {/* Cons */}
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <XCircle className="h-5 w-5 text-red-500" /> Cons
@@ -218,28 +220,94 @@ export default function DashboardClient({ initialReports }: { initialReports: To
 
                 <div className="border-t border-slate-200 dark:border-slate-800" />
                 
-                <div className="space-y-3">
-                   <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <Wrench className="h-5 w-5 text-slate-500" /> Key Features
-                  </h3>
-                   <ul className="list-disc list-inside space-y-2 pl-2">
-                    {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
-                  </ul>
-                </div>
-                
-                <div className="border-t border-slate-200 dark:border-slate-800" />
-                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <Users className="h-5 w-5 text-slate-500" /> Target Audience
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedTool.target_audience.map((audience) => (
-                      <Badge key={audience} variant="secondary">{audience}</Badge>
-                    ))}
+                {/* REGLA POPUP 2: TODOS los campos están presentes */}
+                {/* Key Features */}
+                {selectedTool.key_features && selectedTool.key_features.length > 0 && (
+                  <div className="space-y-3">
+                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <Wrench className="h-5 w-5 text-slate-500" /> Key Features
+                    </h3>
+                    <ul className="list-disc list-inside space-y-2 pl-2">
+                      {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
+                    </ul>
                   </div>
-                </div>
+                )}
+                
+                {/* Use Case */}
+                {selectedTool.use_case && (
+                  <>
+                    <div className="border-t border-slate-200 dark:border-slate-800" />
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-slate-500" /> Use Case
+                      </h3>
+                      <p>{selectedTool.use_case}</p>
+                    </div>
+                  </>
+                )}
+
+                {/* Pricing */}
+                {selectedTool.pricing && (
+                  <>
+                    <div className="border-t border-slate-200 dark:border-slate-800" />
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                        <DollarSign className="h-5 w-5 text-slate-500" /> Pricing
+                      </h3>
+                      <p>{selectedTool.pricing}</p>
+                    </div>
+                  </>
+                )}
+
+                {/* Alternatives */}
+                {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
+                  <>
+                    <div className="border-t border-slate-200 dark:border-slate-800" />
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Alternatives</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {selectedTool.alternatives.map((alt, index) => (
+                          <Button key={index} variant="outline" className="justify-start h-auto p-3 bg-transparent" onClick={() => window.open(alt.url, "_blank")}>
+                            <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">{alt.name}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Consulted Sources */}
+                {selectedTool.consulted_sources && selectedTool.consulted_sources.length > 0 && (
+                   <>
+                    <div className="border-t border-slate-200 dark:border-slate-800" />
+                    <div className="space-y-3">
+                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-slate-500" /> Consulted Sources
+                      </h3>
+                      <div className="flex flex-col items-start gap-2">
+                        {selectedTool.consulted_sources.map((source, index) => {
+                          const match = source.match(/<(.+?)\|(.+?)>/);
+                          if (match) {
+                            const [, url, title] = match;
+                            return (
+                               <Button key={index} variant="link" className="h-auto p-0 text-slate-500 dark:text-blue-400" onClick={() => window.open(url, "_blank")}>
+                                {title}
+                              </Button>
+                            )
+                          }
+                          return (
+                            <Button key={index} variant="link" className="h-auto p-0 text-slate-500 dark:text-blue-400" onClick={() => window.open(source, "_blank")}>
+                              {source}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
