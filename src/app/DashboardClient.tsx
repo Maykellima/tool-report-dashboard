@@ -3,30 +3,30 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import Link from "next/link"
 import {
   Search,
   ExternalLink,
   Users,
-  Wrench,
-  Calendar,
-  TrendingUp,
-  Globe,
   CheckCircle,
   XCircle,
+  Wrench,
+  Calendar,
+  Globe,
+  TrendingUp,
+  LayoutGrid,
+  List,
   FileText,
   DollarSign,
-  BookOpen,
+  BookOpen
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { List, LayoutGrid } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface ToolReport {
   id: string
@@ -105,18 +105,19 @@ export default function DashboardClient({ initialReports }: { initialReports: To
         </div>
       </div>
 
-      {/* Conditional View: Grid or List */}
+      {/* Conditional View: Grid (4 columns) or List */}
       {view === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredAndSortedTools.map((tool) => (
             <Card
               key={tool.id}
-              className="cursor-pointer hover:shadow-lg transition-all duration-200 flex flex-col bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
+              className="cursor-pointer hover:shadow-lg transition-all duration-200 flex flex-col bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover-border-slate-700"
               onClick={() => setSelectedTool(tool)}
             >
               <CardHeader className="pb-4">
                 <CardTitle className="text-slate-900 dark:text-slate-100 text-xl flex-1">{tool.name}</CardTitle>
                 <div className="flex flex-wrap gap-1 pt-2">
+                  {/* REGLA 1: Se muestran TODAS las categorías, más pequeñas y con color azul */}
                   {tool.categories.map((category) => (
                     <Badge key={category} className="text-[10px] px-1.5 py-0.5 font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300">
                       {category}
@@ -131,6 +132,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 </CardDescription>
               </CardContent>
 
+              {/* REGLA 2: Se mantiene Consistency y Updated en la card */}
               <div className="px-6 pb-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
                  {tool.consistency_web_vs_users != null && (
                   <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
@@ -179,6 +181,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
         </div>
       )}
       
+      {/* REGLA POPUP: Dialog ahora es más ancho (60vw), con scroll y texto de 14px (text-sm) */}
       <Dialog open={!!selectedTool} onOpenChange={() => setSelectedTool(null)}>
         <DialogContent className="w-[60vw] max-w-none max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-sm">
           {selectedTool && (
@@ -192,8 +195,10 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 </Button>
               </DialogHeader>
 
+              {/* Contenido del modal que se ajusta al 100% del ancho disponible */}
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Pros */}
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-green-500" /> Pros
@@ -202,6 +207,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       {selectedTool.pros.map((pro, index) => <li key={index}>{pro}</li>)}
                     </ul>
                   </div>
+                  {/* Cons */}
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <XCircle className="h-5 w-5 text-red-500" /> Cons
@@ -214,6 +220,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
 
                 <div className="border-t border-slate-200 dark:border-slate-800" />
                 
+                {/* Key Features */}
                 {selectedTool.key_features && selectedTool.key_features.length > 0 && (
                   <div className="space-y-3">
                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
@@ -225,6 +232,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </div>
                 )}
                 
+                {/* Use Case */}
                 {selectedTool.use_case && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -237,6 +245,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </>
                 )}
 
+                {/* Pricing */}
                 {selectedTool.pricing && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -249,6 +258,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </>
                 )}
 
+                {/* Alternatives */}
                 {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -266,6 +276,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </>
                 )}
 
+                {/* Consulted Sources */}
                 {selectedTool.consulted_sources && selectedTool.consulted_sources.length > 0 && (
                    <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
