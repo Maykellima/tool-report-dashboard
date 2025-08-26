@@ -7,7 +7,6 @@ import {
   Search,
   ExternalLink,
   Users,
-  Target,
   CheckCircle,
   XCircle,
   Wrench,
@@ -41,7 +40,6 @@ interface ToolReport {
   consulted_sources?: string[]
 }
 
-// Función de color mejorada para manejar cualquier categoría
 const getCategoryColor = (category: string) => {
   const colors = [
     "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
@@ -70,7 +68,8 @@ export default function DashboardClient({ initialReports }: { initialReports: To
   const [toolReports] = useState<ToolReport[]>(initialReports)
 
   const filteredAndSortedTools = useMemo(() => {
-    let filtered = toolReports.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    // CAMBIO: 'let' corregido a 'const'
+    const filtered = toolReports.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     if (sortBy === "alphabetical") {
       filtered.sort((a, b) => a.name.localeCompare(b.name))
@@ -139,7 +138,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
             </CardContent>
 
             <div className="px-6 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
-               {tool.consistency_web_vs_users && (
+               {tool.consistency_web_vs_users != null && (
                 <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                   <TrendingUp className="h-4 w-4 flex-shrink-0" />
                   <span>Consistency: {tool.consistency_web_vs_users}%</span>
@@ -172,7 +171,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
               </DialogHeader>
 
               <div className="space-y-6">
-                {/* --- SEPARADOR --- */}
                 <div className="border-t border-slate-200 dark:border-slate-800" />
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -196,7 +194,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </div>
                 </div>
 
-                {/* --- SEPARADOR --- */}
                 <div className="border-t border-slate-200 dark:border-slate-800" />
                 
                 {/* Key Features */}
@@ -209,7 +206,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </ul>
                 </div>
 
-                {/* --- SEPARADOR --- */}
                 <div className="border-t border-slate-200 dark:border-slate-800" />
 
                 {/* Target Audience */}
@@ -224,7 +220,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </div>
                 </div>
 
-                {/* --- SEPARADOR --- */}
                 <div className="border-t border-slate-200 dark:border-slate-800" />
 
                 {/* Alternatives */}
