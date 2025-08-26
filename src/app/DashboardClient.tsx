@@ -3,30 +3,27 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import {
   Search,
   ExternalLink,
   Users,
-  CheckCircle,
-  XCircle,
   Wrench,
   Calendar,
-  Globe,
   TrendingUp,
-  LayoutGrid,
-  List,
+  Globe,
+  CheckCircle,
+  XCircle,
   FileText,
   DollarSign,
-  BookOpen,
+  BookOpen
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface ToolReport {
   id: string
@@ -51,7 +48,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("recent")
   const [selectedTool, setSelectedTool] = useState<ToolReport | null>(null)
-  const [view, setView] = useState("grid")
   
   const [toolReports] = useState<ToolReport[]>(initialReports)
 
@@ -70,7 +66,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">Tool Report Dashboard</h1>
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -83,190 +78,104 @@ export default function DashboardClient({ initialReports }: { initialReports: To
               className="pl-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
             />
           </div>
-
-          <div className="flex items-center gap-4">
-             <ToggleGroup type="single" value={view} onValueChange={(value) => value && setView(value)} defaultValue="grid">
-              <ToggleGroupItem value="grid" aria-label="Toggle grid view">
-                <LayoutGrid className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="Toggle list view">
-                <List className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-48 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Most Recent</SelectItem>
-                <SelectItem value="alphabetical">Alphabetical</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-full sm:w-48 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="alphabetical">Alphabetical</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {/* Conditional View: Grid or List */}
-      {view === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredAndSortedTools.map((tool) => (
-            <Card
-              key={tool.id}
-              className="cursor-pointer hover:shadow-lg transition-all duration-200 flex flex-col bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
-              onClick={() => setSelectedTool(tool)}
-            >
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-slate-900 dark:text-slate-100 text-xl flex-1">{tool.name}</CardTitle>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); window.open(tool.official_url, "_blank") }}>
+      {/* CAMBIO: ajustado a 4 columnas en pantallas grandes (lg) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {filteredAndSortedTools.map((tool) => (
+          <Card
+            key={tool.id}
+            className="cursor-pointer hover:shadow-lg transition-all duration-200 flex flex-col bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
+            onClick={() => setSelectedTool(tool)}
+          >
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between gap-2">
+                <CardTitle className="text-slate-900 dark:text-slate-100 text-xl flex-1">{tool.name}</CardTitle>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                  <a href={tool.official_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                     <ExternalLink className="h-4 w-4 text-slate-500" />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-1 pt-2">
-                  {tool.categories.map((category) => (
-                    <Badge key={category} className="text-xs font-medium bg-black text-white hover:bg-gray-800 dark:bg-black dark:text-white">
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
-              </CardHeader>
-
-              <CardContent className="flex-grow pt-0">
-                <CardDescription className="text-slate-600 dark:text-slate-400 line-clamp-3 mb-4">
-                  {tool.short_description}
-                </CardDescription>
-              </CardContent>
-
-              <div className="px-6 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
-                 {tool.consistency_web_vs_users != null && (
-                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                    <TrendingUp className="h-4 w-4 flex-shrink-0" />
-                    <span>Consistency: {tool.consistency_web_vs_users}%</span>
-                  </div>
-                )}
-                {tool.last_searched_at && (
-                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-500">
-                    <Calendar className="h-4 w-4 flex-shrink-0" />
-                    <span>Updated: {new Date(tool.last_searched_at).toLocaleDateString()}</span>
-                  </div>
+                  </a>
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-1 pt-2">
+                <Badge className="text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300">
+                  {tool.categories[0]}
+                </Badge>
+                {tool.categories.length > 1 && (
+                   <Badge variant="outline" className="text-xs text-slate-500 dark:text-slate-400">
+                    +{tool.categories.length - 1} more
+                  </Badge>
                 )}
               </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Categories</TableHead>
-                <TableHead>Last Updated</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAndSortedTools.map((tool) => (
-                <TableRow key={tool.id} className="cursor-pointer" onClick={() => setSelectedTool(tool)}>
-                  <TableCell className="font-medium">{tool.name}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {tool.categories.map((category) => (
-                        <Badge key={category} className="text-xs font-medium bg-black text-white hover:bg-gray-800 dark:bg-black dark:text-white">
-                          {category}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>{new Date(tool.last_searched_at || 0).toLocaleDateString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+            </CardHeader>
+
+            <CardContent className="flex-grow pt-0">
+              <CardDescription className="text-slate-600 dark:text-slate-400 line-clamp-3 mb-4">
+                {tool.short_description}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       <Dialog open={!!selectedTool} onOpenChange={() => setSelectedTool(null)}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-sm">
+        <DialogContent className="max-w-lg mx-auto bg-white dark:bg-slate-900 p-8 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800">
           {selectedTool && (
             <>
-              <DialogHeader className="pb-4">
+              <DialogHeader className="text-center pb-4 border-b border-slate-200 dark:border-slate-800">
                 <DialogTitle className="text-3xl font-bold text-slate-900 dark:text-slate-100">{selectedTool.name}</DialogTitle>
-                <DialogDescription className="text-slate-600 dark:text-slate-400 text-base pt-2">
-                  {selectedTool.short_description}
-                </DialogDescription>
-                 <Button variant="outline" className="w-fit mt-4 bg-transparent" onClick={() => window.open(selectedTool.official_url, "_blank")}>
+                <DialogDescription className="text-slate-600 dark:text-slate-400 text-base pt-2">{selectedTool.short_description}</DialogDescription>
+                <Button variant="outline" className="w-fit mt-4 mx-auto bg-transparent" onClick={() => window.open(selectedTool.official_url, "_blank")}>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Visit Official Website
                 </Button>
               </DialogHeader>
 
-              <div className="space-y-6">
-                <div className="border-t border-slate-200 dark:border-slate-800" />
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Pros */}
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <CheckCircle className="h-6 w-6 text-green-500" /> Pros
-                    </h3>
-                    <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
+              <div className="space-y-6 pt-6 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><CheckCircle className="h-5 w-5 text-green-500" /> Pros</h3>
+                    <ul className="list-disc list-inside space-y-1 pl-2 text-slate-600 dark:text-slate-400">
                       {selectedTool.pros.map((pro, index) => <li key={index}>{pro}</li>)}
                     </ul>
                   </div>
-                  {/* Cons */}
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <XCircle className="h-6 w-6 text-red-500" /> Cons
-                    </h3>
-                    <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><XCircle className="h-5 w-5 text-red-500" /> Cons</h3>
+                    <ul className="list-disc list-inside space-y-1 pl-2 text-slate-600 dark:text-slate-400">
                       {selectedTool.cons.map((con, index) => <li key={index}>{con}</li>)}
                     </ul>
                   </div>
                 </div>
+
                 <div className="border-t border-slate-200 dark:border-slate-800" />
-                {/* Key Features */}
-                {selectedTool.key_features && selectedTool.key_features.length > 0 && (
-                  <div className="space-y-3">
-                     <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                      <Wrench className="h-6 w-6 text-slate-500" /> Key Features
-                    </h3>
-                    <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
-                      {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {/* --- INICIO DEL CÓDIGO AÑADIDO --- */}
-                {selectedTool.use_case && (
-                  <>
-                    <div className="border-t border-slate-200 dark:border-slate-800" />
-                    <div className="space-y-3">
-                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                        <FileText className="h-6 w-6 text-slate-500" /> Use Case
-                      </h3>
-                      <p className="text-slate-600 dark:text-slate-400">{selectedTool.use_case}</p>
-                    </div>
-                  </>
-                )}
-                {selectedTool.pricing && (
-                  <>
-                    <div className="border-t border-slate-200 dark:border-slate-800" />
-                    <div className="space-y-3">
-                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                        <DollarSign className="h-6 w-6 text-slate-500" /> Pricing
-                      </h3>
-                      <p className="text-slate-600 dark:text-slate-400">{selectedTool.pricing}</p>
-                    </div>
-                  </>
-                )}
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><Wrench className="h-5 w-5 text-slate-500" /> Key Features</h3>
+                  <ul className="list-disc list-inside space-y-1 pl-2 text-slate-600 dark:text-slate-400">
+                    {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
+                  </ul>
+                </div>
+
+                {/* CAMBIO: Añadida comprobación de seguridad para 'alternatives' */}
                 {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
-                    <div className="space-y-3">
-                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Alternatives</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><Globe className="h-5 w-5 text-slate-500" /> Alternatives</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {selectedTool.alternatives.map((alt, index) => (
-                          <Button key={index} variant="outline" className="justify-start h-auto p-3 bg-transparent" onClick={() => window.open(alt.url, "_blank")}>
-                            <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <Button key={index} variant="outline" className="justify-start h-auto p-2 bg-transparent text-xs" onClick={() => window.open(alt.url, "_blank")}>
+                            <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
                             <span className="truncate">{alt.name}</span>
                           </Button>
                         ))}
@@ -274,24 +183,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                     </div>
                   </>
                 )}
-                {selectedTool.consulted_sources && selectedTool.consulted_sources.length > 0 && (
-                   <>
-                    <div className="border-t border-slate-200 dark:border-slate-800" />
-                    <div className="space-y-3">
-                       <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                        <BookOpen className="h-6 w-6 text-slate-500" /> Consulted Sources
-                      </h3>
-                      <div className="flex flex-col items-start gap-2">
-                        {selectedTool.consulted_sources.map((source, index) => (
-                          <Button key={index} variant="link" className="h-auto p-0 text-slate-500" onClick={() => window.open(source, "_blank")}>
-                            {source}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-                {/* --- FIN DEL CÓDIGO AÑADIDO --- */}
               </div>
             </>
           )}
