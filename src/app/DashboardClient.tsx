@@ -68,7 +68,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
   const [toolReports] = useState<ToolReport[]>(initialReports)
 
   const filteredAndSortedTools = useMemo(() => {
-    // CAMBIO: 'let' corregido a 'const'
     const filtered = toolReports.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     if (sortBy === "alphabetical") {
@@ -197,14 +196,16 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 <div className="border-t border-slate-200 dark:border-slate-800" />
                 
                 {/* Key Features */}
-                <div className="space-y-3">
-                   <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <Wrench className="h-6 w-6 text-slate-500" /> Key Features
-                  </h3>
-                  <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
-                    {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
-                  </ul>
-                </div>
+                {selectedTool.key_features && selectedTool.key_features.length > 0 && (
+                  <div className="space-y-3">
+                     <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <Wrench className="h-6 w-6 text-slate-500" /> Key Features
+                    </h3>
+                    <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
+                      {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
+                    </ul>
+                  </div>
+                )}
 
                 <div className="border-t border-slate-200 dark:border-slate-800" />
 
@@ -220,20 +221,24 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 dark:border-slate-800" />
-
-                {/* Alternatives */}
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Alternatives</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedTool.alternatives.map((alt, index) => (
-                      <Button key={index} variant="outline" className="justify-start h-auto p-3 bg-transparent" onClick={() => window.open(alt.url, "_blank")}>
-                        <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
-                        <span className="truncate">{alt.name}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                {/* --- INICIO DEL CAMBIO: Añadir comprobación para 'alternatives' --- */}
+                {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
+                  <>
+                    <div className="border-t border-slate-200 dark:border-slate-800" />
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Alternatives</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {selectedTool.alternatives.map((alt, index) => (
+                          <Button key={index} variant="outline" className="justify-start h-auto p-3 bg-transparent" onClick={() => window.open(alt.url, "_blank")}>
+                            <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">{alt.name}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+                {/* --- FIN DEL CAMBIO --- */}
               </div>
             </>
           )}
