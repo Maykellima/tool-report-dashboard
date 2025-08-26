@@ -117,7 +117,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
               <CardHeader className="pb-4">
                 <CardTitle className="text-slate-900 dark:text-slate-100 text-xl flex-1">{tool.name}</CardTitle>
                 <div className="flex flex-wrap gap-1 pt-2">
-                  {/* REGLA 1: Se muestran TODAS las categorías, más pequeñas y con color azul */}
                   {tool.categories.map((category) => (
                     <Badge key={category} className="text-[10px] px-1.5 py-0.5 font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300">
                       {category}
@@ -132,7 +131,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 </CardDescription>
               </CardContent>
 
-              {/* REGLA 2: Se mantiene Consistency y Updated en la card */}
               <div className="px-6 pb-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
                  {tool.consistency_web_vs_users != null && (
                   <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
@@ -181,7 +179,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
         </div>
       )}
       
-      {/* REGLA POPUP: Dialog ahora es más ancho (60vw), con scroll y texto de 14px (text-sm) */}
       <Dialog open={!!selectedTool} onOpenChange={() => setSelectedTool(null)}>
         <DialogContent className="w-[60vw] max-w-none max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-sm">
           {selectedTool && (
@@ -195,7 +192,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                 </Button>
               </DialogHeader>
 
-              {/* Contenido del modal que se ajusta al 100% del ancho disponible */}
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Pros */}
@@ -204,7 +200,8 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       <CheckCircle className="h-5 w-5 text-green-500" /> Pros
                     </h3>
                     <ul className="list-disc list-inside space-y-2 pl-2">
-                      {selectedTool.pros.map((pro, index) => <li key={index}>{pro}</li>)}
+                      {/* CAMBIO: Añadida la clase 'break-words' para que el texto se ajuste */}
+                      {selectedTool.pros.map((pro, index) => <li key={index} className="break-words">{pro}</li>)}
                     </ul>
                   </div>
                   {/* Cons */}
@@ -213,26 +210,25 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       <XCircle className="h-5 w-5 text-red-500" /> Cons
                     </h3>
                     <ul className="list-disc list-inside space-y-2 pl-2">
-                      {selectedTool.cons.map((con, index) => <li key={index}>{con}</li>)}
+                      {/* CAMBIO: Añadida la clase 'break-words' para que el texto se ajuste */}
+                      {selectedTool.cons.map((con, index) => <li key={index} className="break-words">{con}</li>)}
                     </ul>
                   </div>
                 </div>
 
                 <div className="border-t border-slate-200 dark:border-slate-800" />
                 
-                {/* Key Features */}
                 {selectedTool.key_features && selectedTool.key_features.length > 0 && (
                   <div className="space-y-3">
                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <Wrench className="h-5 w-5 text-slate-500" /> Key Features
                     </h3>
                     <ul className="list-disc list-inside space-y-2 pl-2">
-                      {selectedTool.key_features.map((feature, index) => <li key={index}>{feature}</li>)}
+                      {selectedTool.key_features.map((feature, index) => <li key={index} className="break-words">{feature}</li>)}
                     </ul>
                   </div>
                 )}
                 
-                {/* Use Case */}
                 {selectedTool.use_case && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -240,12 +236,11 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                         <FileText className="h-5 w-5 text-slate-500" /> Use Case
                       </h3>
-                      <p>{selectedTool.use_case}</p>
+                      <p className="break-words">{selectedTool.use_case}</p>
                     </div>
                   </>
                 )}
 
-                {/* Pricing */}
                 {selectedTool.pricing && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -253,12 +248,11 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                         <DollarSign className="h-5 w-5 text-slate-500" /> Pricing
                       </h3>
-                      <p>{selectedTool.pricing}</p>
+                      <p className="break-words">{selectedTool.pricing}</p>
                     </div>
                   </>
                 )}
 
-                {/* Alternatives */}
                 {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
@@ -276,7 +270,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </>
                 )}
 
-                {/* Consulted Sources */}
                 {selectedTool.consulted_sources && selectedTool.consulted_sources.length > 0 && (
                    <>
                     <div className="border-t border-slate-200 dark:border-slate-800" />
