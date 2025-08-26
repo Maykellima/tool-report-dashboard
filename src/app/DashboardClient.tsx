@@ -7,13 +7,10 @@ import {
   Search,
   ExternalLink,
   Users,
-  Target,
   CheckCircle,
   XCircle,
   Wrench,
-  Calendar,
   Globe,
-  TrendingUp,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -22,7 +19,6 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
-// La interfaz de datos no cambia
 interface ToolReport {
   id: string
   name: string
@@ -42,7 +38,6 @@ interface ToolReport {
   consulted_sources?: string[]
 }
 
-// La función para los colores de las categorías tampoco cambia
 const getCategoryColor = (category: string) => {
   const colors = {
     "AI Research Assistant": "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
@@ -63,7 +58,8 @@ export default function DashboardClient({ initialReports }: { initialReports: To
   const [toolReports] = useState<ToolReport[]>(initialReports)
 
   const filteredAndSortedTools = useMemo(() => {
-    let filtered = toolReports.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    // CAMBIO: 'let' cambiado a 'const'
+    const filtered = toolReports.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     if (sortBy === "alphabetical") {
       filtered.sort((a, b) => a.name.localeCompare(b.name))
@@ -148,7 +144,6 @@ export default function DashboardClient({ initialReports }: { initialReports: To
         ))}
       </div>
 
-      {/* --- INICIO DEL CÓDIGO AÑADIDO --- */}
       <Dialog open={!!selectedTool} onOpenChange={() => setSelectedTool(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
           {selectedTool && (
@@ -199,8 +194,7 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </ul>
                 </div>
               </div>
-
-              {/* Key Features */}
+              
               {selectedTool.key_features && selectedTool.key_features.length > 0 && (
                 <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-3">
@@ -214,31 +208,10 @@ export default function DashboardClient({ initialReports }: { initialReports: To
                   </ul>
                 </div>
               )}
-
-              {/* Alternatives */}
-              {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">Alternatives</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedTool.alternatives.map((alt, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="justify-start h-auto p-3 bg-transparent"
-                        onClick={() => window.open(alt.url, "_blank")}
-                      >
-                        <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
-                        <span className="truncate">{alt.name}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </>
           )}
         </DialogContent>
       </Dialog>
-      {/* --- FIN DEL CÓDIGO AÑADIDO --- */}
     </div>
   )
 }
